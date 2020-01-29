@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public int health;
+
     public float distanceAttack;
     public float speed;
-
+    public int heat;
     protected bool isMoving = false;
     protected Rigidbody2D rb2d;
     protected Animator anim;
@@ -40,6 +40,7 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+
     protected float PlayerDistance()
     {
         return Vector2.Distance(playerAlvo.position, transform.position);
@@ -50,5 +51,38 @@ public class EnemyController : MonoBehaviour
         sprite.flipX = !sprite.flipX;
         speed *= -1;
 
+    }
+
+
+    
+    private void OnTriggerEnter2D(Collider2D other){
+
+        if (other.CompareTag("Attack"))
+        {
+            DamageEnemy();
+            Debug.Log("Acertou essa desgraçaa");
+        }
+    }
+
+     IEnumerator DamageEffect(){
+
+        float actualSpeed = speed;
+        sprite.color = Color.red;
+        speed = speed * -1;
+        rb2d.AddForce (new Vector2(0f, 200f));
+        yield return new WaitForSeconds(0.2f);
+        speed = actualSpeed;
+        sprite.color = Color.white;
+    }
+
+    void DamageEnemy()
+    {
+        heat--;
+        StartCoroutine(DamageEffect());
+
+        if (heat < 1)
+        {
+            Destroy(gameObject);
+        }
     }
 }
